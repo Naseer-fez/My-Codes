@@ -1,3 +1,6 @@
 [submodule "Api_RateLimiter"]
 	path = Api_RateLimiter
 	url = https://github.com/Naseer-fez/Api_RateLimiter.git
+[submodule "Credit_Score_Predictor"]
+	path = Credit_Score_Predictor
+	url = https://github.com/Naseer-fez/Credit_Score_Predictor.git
