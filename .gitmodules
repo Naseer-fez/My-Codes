@@ -13,3 +13,6 @@
 [submodule "MineSweper_game"]
 	path = MineSweper_game
 	url = https://github.com/Naseer-fez/MineSweper_game.git
+[submodule "music_rec"]
+	path = music_rec
+	url = https://github.com/Naseer-fez/music_rec.git
