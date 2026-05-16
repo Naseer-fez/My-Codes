@@ -1,0 +1,8 @@
+# Default install: core runtime only.
+# Optional feature groups:
+#   pip install -r requirements/full.txt
+#   pip install -r requirements/integrations.txt
+#   pip install -r requirements/voice.txt
+#   pip install -r requirements/dev.txt
+
+-r requirements/base.txt
