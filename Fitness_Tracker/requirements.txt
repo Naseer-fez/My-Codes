@@ -1,8 +1,0 @@
-Flask
-Flask-SQLAlchemy
-PyMySQL
-python-dotenv
-pandas
-xgboost
-ollama
-requests
