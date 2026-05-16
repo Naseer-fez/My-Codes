@@ -7,3 +7,6 @@
 [submodule "Fitness_Tracker"]
 	path = Fitness_Tracker
 	url = https://github.com/Naseer-fez/Fitness_Tracker.git
+[submodule "Hosplital_Managment"]
+	path = Hosplital_Managment
+	url = https://github.com/Naseer-fez/Hosplital_Managment.git
