@@ -1,0 +1,186 @@
+name: Weekly Change Check
+
+on:
+  schedule:
+    # Runs every Sunday at midnight UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    # Allow manual triggering from the Actions tab
+
+jobs:
+  check-changes:
+    name: Check for Changes Across All Repos
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      # -------------------------------------------------------
+      # 1. Checkout with full history + submodules
+      # -------------------------------------------------------
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      # -------------------------------------------------------
+      # 2. Configure git identity for bot commits
+      # -------------------------------------------------------
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # -------------------------------------------------------
+      # 3. Read AllLinks.txt and display tracked repos
+      # -------------------------------------------------------
+      - name: Read AllLinks.txt and list tracked repos
+        id: read-links
+        run: |
+          echo "========================================"
+          echo "  Reading AllLinks.txt"
+          echo "========================================"
+
+          if [ ! -f AllLinks.txt ]; then
+            echo "::error::AllLinks.txt not found in repository root!"
+            exit 1
+          fi
+
+          # Extract unique repo URLs (handles space/newline separated)
+          REPOS=$(tr ' ' '\n' < AllLinks.txt | grep -E 'https?://' | sort -u)
+          COUNT=$(echo "$REPOS" | wc -l)
+
+          echo "Found $COUNT unique repos in AllLinks.txt:"
+          echo "$REPOS" | while read -r url; do
+            NAME=$(basename "$url" .git)
+            echo "  - $NAME ($url)"
+          done
+
+          # Save to file for next step
+          echo "$REPOS" > /tmp/repo_urls.txt
+
+      # -------------------------------------------------------
+      # 4. Read last checked hash (parent repo)
+      # -------------------------------------------------------
+      - name: Read last checked hash
+        id: last-hash
+        run: |
+          if [ -f .last-check-hash ]; then
+            LAST_HASH=$(cat .last-check-hash | tr -d '[:space:]')
+            echo "Found stored hash: $LAST_HASH"
+          else
+            LAST_HASH=""
+            echo "No .last-check-hash file found — first run"
+          fi
+          echo "hash=$LAST_HASH" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # 5. Get current HEAD hash
+      # -------------------------------------------------------
+      - name: Get current HEAD hash
+        id: current-hash
+        run: |
+          CURRENT_HASH=$(git rev-parse HEAD)
+          echo "Current HEAD hash: $CURRENT_HASH"
+          echo "hash=$CURRENT_HASH" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # 6. Check each submodule for upstream changes
+      # -------------------------------------------------------
+      - name: Check submodules for upstream changes
+        id: submodule-check
+        run: |
+          echo "========================================"
+          echo "  Checking submodules for new commits"
+          echo "========================================"
+
+          CHANGES_FOUND=false
+
+          while read -r url; do
+            [ -z "$url" ] && continue
+            NAME=$(basename "$url" .git)
+
+            if [ ! -d "$NAME" ]; then
+              echo "⚠️  $NAME — directory not found (not yet cloned as submodule)"
+              continue
+            fi
+
+            echo ""
+            echo "── $NAME ──"
+
+            cd "$NAME"
+
+            # Fetch latest from upstream
+            git fetch origin 2>/dev/null
+
+            LOCAL=$(git rev-parse HEAD 2>/dev/null)
+            REMOTE=$(git rev-parse origin/HEAD 2>/dev/null || git rev-parse origin/main 2>/dev/null || git rev-parse origin/master 2>/dev/null)
+
+            if [ -z "$REMOTE" ]; then
+              echo "   ⚠️  Could not determine remote HEAD"
+              cd ..
+              continue
+            fi
+
+            if [ "$LOCAL" != "$REMOTE" ]; then
+              echo "   🔄 Changes detected!"
+              echo "      Local:  $LOCAL"
+              echo "      Remote: $REMOTE"
+              CHANGES_FOUND=true
+            else
+              echo "   ✅ Up to date ($LOCAL)"
+            fi
+
+            cd ..
+          done < /tmp/repo_urls.txt
+
+          echo ""
+          echo "submodule_changes=$CHANGES_FOUND" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # 7. Compare parent repo hash and decide action
+      # -------------------------------------------------------
+      - name: Compare hashes and update if changed
+        env:
+          LAST_HASH: ${{ steps.last-hash.outputs.hash }}
+          CURRENT_HASH: ${{ steps.current-hash.outputs.hash }}
+          SUBMODULE_CHANGES: ${{ steps.submodule-check.outputs.submodule_changes }}
+        run: |
+          echo "========================================"
+          echo "  SUMMARY"
+          echo "========================================"
+          echo "  Last checked hash   : ${LAST_HASH:-<none>}"
+          echo "  Current HEAD hash   : $CURRENT_HASH"
+          echo "  Submodule changes   : $SUBMODULE_CHANGES"
+          echo "========================================"
+
+          PARENT_CHANGED=false
+          if [ "$LAST_HASH" != "$CURRENT_HASH" ]; then
+            PARENT_CHANGED=true
+          fi
+
+          if [ "$PARENT_CHANGED" = "true" ] || [ "$SUBMODULE_CHANGES" = "true" ]; then
+            echo ""
+            if [ "$PARENT_CHANGED" = "true" ]; then
+              echo "🔄 Parent repo has new commits since last check."
+            fi
+            if [ "$SUBMODULE_CHANGES" = "true" ]; then
+              echo "🔄 One or more submodules have upstream changes."
+            fi
+
+            # Update the hash file
+            echo "$CURRENT_HASH" > .last-check-hash
+            echo ""
+            echo "Updated .last-check-hash → $CURRENT_HASH"
+
+            # Commit and push
+            git add .last-check-hash
+            git commit -m "chore: update change-check hash [skip ci]"
+            git push
+            echo "✅ Committed and pushed updated hash file."
+          else
+            echo ""
+            echo "✅ No changes detected anywhere. Nothing to do."
+          fi
