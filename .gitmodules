@@ -28,3 +28,6 @@
 [submodule "Real-Estate-Pipeline"]
 	path = Real-Estate-Pipeline
 	url = https://github.com/Naseer-fez/Real-Estate-Pipeline.git
+[submodule "Restaurant_Management_Demo"]
+	path = Restaurant_Management_Demo
+	url = https://github.com/Naseer-fez/Restaurant_Management_Demo.git
