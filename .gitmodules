@@ -40,3 +40,6 @@
 [submodule "Student_Records"]
 	path = Student_Records
 	url = https://github.com/Naseer-fez/Student_Records.git
+[submodule "TapNap-Backend"]
+	path = TapNap-Backend
+	url = https://github.com/Naseer-fez/TapNap-Backend.git
