@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+instance/
+.env
+.vscode/
+instance/
+*.db
+Log/
+Api_Rate/Data
+models/ML/Data
+models/ML/Data/Rows
+.pkl
+.c
