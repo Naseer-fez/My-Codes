@@ -37,3 +37,6 @@
 [submodule "Simple_ChatBot"]
 	path = Simple_ChatBot
 	url = https://github.com/Naseer-fez/Simple_ChatBot.git
+[submodule "Student_Records"]
+	path = Student_Records
+	url = https://github.com/Naseer-fez/Student_Records.git
