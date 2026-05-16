@@ -16,3 +16,6 @@
 [submodule "music_rec"]
 	path = music_rec
 	url = https://github.com/Naseer-fez/music_rec.git
+[submodule "Pass_Gen"]
+	path = Pass_Gen
+	url = https://github.com/Naseer-fez/Pass_Gen.git
