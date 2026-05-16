@@ -4,3 +4,6 @@
 [submodule "Dates"]
 	path = Dates
 	url = https://github.com/Naseer-fez/Dates.git
+[submodule "Fitness_Tracker"]
+	path = Fitness_Tracker
+	url = https://github.com/Naseer-fez/Fitness_Tracker.git
