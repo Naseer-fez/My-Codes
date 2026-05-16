@@ -25,3 +25,6 @@
 [submodule "Project_Jarvis"]
 	path = Project_Jarvis
 	url = https://github.com/Naseer-fez/Project_Jarvis.git
+[submodule "Real-Estate-Pipeline"]
+	path = Real-Estate-Pipeline
+	url = https://github.com/Naseer-fez/Real-Estate-Pipeline.git
