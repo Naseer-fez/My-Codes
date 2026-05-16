@@ -4,3 +4,6 @@
 [submodule "Credit_Score_Predictor"]
 	path = Credit_Score_Predictor
 	url = https://github.com/Naseer-fez/Credit_Score_Predictor.git
+[submodule "Dates"]
+	path = Dates
+	url = https://github.com/Naseer-fez/Dates.git
