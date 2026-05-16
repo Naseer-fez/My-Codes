@@ -10,3 +10,6 @@
 [submodule "Hosplital_Managment"]
 	path = Hosplital_Managment
 	url = https://github.com/Naseer-fez/Hosplital_Managment.git
+[submodule "MineSweper_game"]
+	path = MineSweper_game
+	url = https://github.com/Naseer-fez/MineSweper_game.git
