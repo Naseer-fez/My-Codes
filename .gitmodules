@@ -31,3 +31,6 @@
 [submodule "Restaurant_Management_Demo"]
 	path = Restaurant_Management_Demo
 	url = https://github.com/Naseer-fez/Restaurant_Management_Demo.git
+[submodule "Simple_ChatBot"]
+	path = Simple_ChatBot
+	url = https://github.com/Naseer-fez/Simple_ChatBot.git
