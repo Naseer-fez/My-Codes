@@ -43,3 +43,6 @@
 [submodule "TapNap-Backend"]
 	path = TapNap-Backend
 	url = https://github.com/Naseer-fez/TapNap-Backend.git
+[submodule "ToDoList"]
+	path = ToDoList
+	url = https://github.com/Naseer-fez/ToDoList.git
