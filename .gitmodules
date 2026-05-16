@@ -22,3 +22,6 @@
 [submodule "Phone-Contract"]
 	path = Phone-Contract
 	url = https://github.com/Naseer-fez/Phone-Contract.git
+[submodule "Project_Jarvis"]
+	path = Project_Jarvis
+	url = https://github.com/Naseer-fez/Project_Jarvis.git
